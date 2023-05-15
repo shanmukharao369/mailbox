@@ -5,6 +5,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: url(https://img.freepik.com/premium-vector/network-connection-background-abstract-style_23-2148875738.jpg);
+  background-repeat: no; 
+  background-size: cover;
 }
 
 code {
