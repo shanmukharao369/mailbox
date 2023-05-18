@@ -6,6 +6,7 @@ import { NavLink } from "react-router-dom";
 const Inbox = () => {
   const [messages, setMessages] = useState([]);
   const [selectedEmail, setSelectedEmail] = useState(null);
+  const [unreadcount, setUnreadCount] = useState(0);
 
   const userEmail = localStorage.getItem("email");
   const sanitizedEmail = userEmail.replace(/[@.]/g, "");
@@ -34,26 +35,39 @@ const Inbox = () => {
   };
 
   useEffect(() => {
-    if (!sanitizedEmail) {
-      console.log("Email not found in localStorage");
-      return;
-    }
+    setInterval(() => {
+      if (!sanitizedEmail) {
+        console.log("Email not found in localStorage");
+        return;
+      }
+      axios
+        .get(
+          `https://mailbox-7efdc-default-rtdb.firebaseio.com/${sanitizedEmail}/inbox.json`
+        )
+        .then((response) => {
+          console.log(response.data);
 
-    axios
-      .get(
-        `https://mailbox-7efdc-default-rtdb.firebaseio.com/${sanitizedEmail}/inbox.json`
-      )
-      .then((response) => {
-        console.log(
-          `Logging from local inbox ${JSON.stringify(response.data)}`
-        );
-        if (response.data) {
-          setMessages(response.data);
-        }
-      })
-      .catch((error) => {
-        console.log(`Error getting messages: ${error}`);
-      });
+          let unread = 0;
+          for (let i in response.data) {
+            console.log(response.data[i].read, "insideLoop");
+            if (response.data[i].read === false) {
+              unread += 1;
+            }
+          }
+
+          if (unread !== unreadcount) {
+            setUnreadCount(unread);
+          }
+
+          console.log("getInInbox");
+          if (response.data) {
+            setMessages(response.data);
+          }
+        })
+        .catch((error) => {
+          console.log(`Error getting messages: ${error}`);
+        })
+    }, 2000)
   }, [sanitizedEmail]);
 
   const handleClose = () => {
@@ -78,7 +92,9 @@ const Inbox = () => {
 
   return (
     <div>
-      <h3 style={{ color: "white" }}>Inbox-({userEmail})</h3>
+      <h3 style={{ color: "white" }}>
+        Inbox- {`(${userEmail}) There are ${unreadcount} unread messages.`}
+      </h3>
       <Card className="text-left">
         <ListGroup variant="flush">
           {Object.keys(messages)
