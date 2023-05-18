@@ -10,6 +10,8 @@ const NavbarDetails = () => {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
+  const userEmail = localStorage.getItem("email");
+
   const logout = () => {
     alert("logged out succesfull");
     dispatch(authActions.logout());
@@ -33,14 +35,19 @@ const NavbarDetails = () => {
           )}
 
           {isAuthenticated && (
-            <NavLink to="/composemail" className={classes.style} style={{color:"green"}}>
+            <NavLink to="/composemail" className={classes.style}>
               Compose Mail
             </NavLink>
           )}
           {isAuthenticated && (
+            <div>
             <NavLink to="/inbox" className={classes.style} style={{color:"black"}} >
               Inbox
             </NavLink>
+            <NavLink to="/sentbox" className={classes.style} style={{color:"black"}} >
+            Sent box
+            </NavLink>
+            </div>
           )} 
 
           {isAuthenticated && (
@@ -50,6 +57,14 @@ const NavbarDetails = () => {
           )}
         </Nav>
       </Navbar.Collapse>
+      {isAuthenticated && (
+        <>
+          <h4>User: </h4>
+          <h4 className={classes.user}>
+            { userEmail}
+          </h4>
+        </>)
+      }
     </Navbar>
   );
 };
