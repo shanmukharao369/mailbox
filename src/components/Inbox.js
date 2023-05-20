@@ -49,12 +49,11 @@ const Inbox = () => {
 
           let unread = 0;
           for (let i in response.data) {
-            console.log(response.data[i].read, "insideLoop");
             if (response.data[i].read === false) {
               unread += 1;
             }
           }
-
+          console.log(unread,"afterCountLoop",unreadcount);
           if (unread !== unreadcount) {
             setUnreadCount(unread);
           }
